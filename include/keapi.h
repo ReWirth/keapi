@@ -1417,6 +1417,29 @@ KEAPI_CALLTYPE KEAPI_RETVAL KEApiLedSetConfig(KEAPI_PRM_START
 KEAPI_CALLTYPE KEAPI_RETVAL KEApiLedGetConfig(KEAPI_PRM_START
     int32_t ledNb, PKEAPI_LED_CONFIG pConfig);
 
+
+/*!
+ \brief          getting the reset source
+
+ \param[out]     pResetSource return reset source
+ 
+ \return
+ * - KEAPI_RET_SUCCESS on success
+ * - KEAPI_RET_NOT_INITIALIZED when library is not initialized
+ */
+KEAPI_CALLTYPE KEAPI_RETVAL KEApiGetResetSource(int32_t *pResetSource);
+
+
+/*!
+ \brief          clear reset source status
+
+ \return
+ * - KEAPI_RET_SUCCESS on success
+ * - KEAPI_RET_NOT_INITIALIZED when library is not initialized
+ */
+KEAPI_CALLTYPE KEAPI_RETVAL KEApiClearResetSource();
+
+
 #ifdef __cplusplus
 } // #ifdef __cplusplus
 #endif
