@@ -46,35 +46,6 @@ enum FeatureStyle ledStyle; /* LED style. support onlyof 1 case:
 
 				     
 
-/* TODO				     
-* copy from gpio_pins 
-* make a globel API in linux_support */
-static int WriteFile(char *path, char *data)
-{
-	FILE *fp;
-	int ret;
-
-	if ((ret = checkRWAccess(path)) != KEAPI_RET_SUCCESS)
-		return ret;
-
-	fp = fopen(path, "w");
-	if (!fp)
-		return KEAPI_RET_ERROR;
-
-	ret = fwrite(data, 1, strlen(data), fp);
-	if (ret > 0) {
-		ret = fflush(fp);
-		if (ret == 0)
-			ret = KEAPI_RET_SUCCESS;
-		else
-			ret = KEAPI_RET_ERROR;
-	} else {
-		ret = KEAPI_RET_ERROR;
-	}
-
-	fclose(fp);
-	return ret;
-}				     
 
 
 /* function helper, which read led configuration
@@ -327,6 +298,12 @@ KEAPI_RETVAL KEApiLedGetConfig (int32_t ledNb, PKEAPI_LED_CONFIG pConfig)
     return KEAPI_RET_LIBRARY_ERROR;
 }
 
+/*******************************************************************************/
+KEAPI_RETVAL KEApiLedGetCaps (int32_t ledNb, PKEAPI_LED_CONFIG pConfig)
+{
+ /* still only 1 fix configuration possible */
+ return KEApiLedGetConfig (ledNb, pConfig);
+} 
 
 /*******************************************************************************/
 KEAPI_RETVAL KEApiLedSetConfig (int32_t ledNb, KEAPI_LED_CONFIG pConfig)
@@ -353,3 +330,24 @@ KEAPI_RETVAL KEApiLedSetConfig (int32_t ledNb, KEAPI_LED_CONFIG pConfig)
     return KEAPI_RET_LIBRARY_ERROR;
 }
 
+/*******************************************************************************/
+#define SYS_FS_RSTAT  "/sys/devices/platform/komdrv.0/RSTAT"
+
+KEAPI_RETVAL KEApiGetResetSource(int32_t *pResetSource)
+{
+	int32_t ret;
+    char *data, *endptr;   
+
+	if ((ret = ReadFile(SYS_FS_RSTAT, &data)) != KEAPI_RET_SUCCESS) {
+		return ret;
+	}
+
+    *pResetSource = strtol(data, NULL, 0);
+    return KEAPI_RET_SUCCESS;    
+}
+
+/*******************************************************************************/
+KEAPI_RETVAL KEApiClearResetSource()
+{
+    return (WriteFile(SYS_FS_RSTAT, "0xff"));
+} 
