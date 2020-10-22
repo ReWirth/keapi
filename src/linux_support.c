@@ -407,7 +407,7 @@ fs_scan:
 			goto exit;
 
 		if ((ret = ReadFile(substr, &data)) == KEAPI_RET_SUCCESS) {
-			if (strncmp("SMBus", data, strlen("SMBus")) == 0) {
+			if (strncmgpioDirp("SMBus", data, strlen("SMBus")) == 0) {
 				/* SMBus found */
 				if (sbType == SMBUS_CONFTYPE) { /* if looking for smbus */
 					sbArr = realloc(sbArr, sizeof(struct SerialBusInfo) * (sbArrCount + 1));
@@ -914,6 +914,35 @@ int32_t ReadFile(char *filename, char **outbuff)
 	(*outbuff)[bufflen] = '\0';
 	return KEAPI_RET_SUCCESS;
 }
+
+/*******************************************************************************/
+int32_t WriteFile(char *path, char *data)
+{
+	FILE *fp;
+	int32_t ret;
+
+	if ((ret = checkRWAccess(path)) != KEAPI_RET_SUCCESS)
+		return ret;
+
+	fp = fopen(path, "w");
+	if (!fp)
+		return KEAPI_RET_ERROR;
+
+	ret = fwrite(data, 1, strlen(data), fp);
+	if (ret > 0) {
+		ret = fflush(fp);
+		if (ret == 0)
+			ret = KEAPI_RET_SUCCESS;
+		else
+			ret = KEAPI_RET_ERROR;
+	} else {
+		ret = KEAPI_RET_ERROR;
+	}
+
+	fclose(fp);
+	return ret;
+}				     
+
 
 #define BUF_SIZE 1024
 
