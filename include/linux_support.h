@@ -80,6 +80,7 @@ int32_t GetStorageConfig(void);
 int8_t IsSensorIgnored(char *hwmonName, char *sensorName);
 uint32_t getDmiTable(char **table, uint16_t *table_len, uint16_t *struct_count);
 int32_t ReadFile(char *filename, char **outbuff);
+int32_t WriteFile(char *path, char *data);
 int32_t GetExternalCommandOutput(char *command, char **data);
 int32_t FindRegex(char *str, char *regex, int8_t *found, int32_t flags);
 int32_t GetSubStrRegex(char *str, char *regex, char **substr, int32_t flags);
